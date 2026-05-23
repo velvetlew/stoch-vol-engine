@@ -22,14 +22,20 @@ stoch-vol-engine/
 
 ## Reproducible steps
 
+Clone the repository:
 ```bash
 git clone https://github.com/velvetlew/stoch-vol-engine.git
 ```
 
+Run the container and convert the notebook to HTML:
+
 ```bash
-docker run --rm -v "$(pwd)":/app stoch-vol-engine jupyter nbconvert --to html --execute pricing.ipynb
+docker run --rm -v "$(pwd)":/app velvetlew/stoch-vol-engine jupyter nbconvert --to html --execute pricing.ipynb
 ```
 
+Open the generated HTML report:
 ```bash
 open -a "Google Chrome" pricing.html
 ```
+
+

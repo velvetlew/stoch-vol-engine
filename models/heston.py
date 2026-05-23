@@ -2,6 +2,25 @@ import math
 import cmath
 
 class Heston:
+    """Analytic Heston model pricing engine for European options.
+
+    This class computes European call and put option prices using the Heston
+    characteristic function and Gauss-Laguerre integration.
+
+    Attributes:
+        _s: Spot price of the underlying asset.
+        _k: Strike price.
+        _mat: Time to maturity.
+        _r: Risk-free rate.
+        _q: Dividend yield.
+        _type: Option type ('call', 'put', or boolean flag).
+        _v0: Initial variance.
+        _kappa: Mean reversion speed.
+        _theta: Long-run variance level.
+        _xi: Volatility of volatility.
+        _rho: Correlation between asset and variance Brownian motions.
+    """
+
     def __init__(
         self,
         spot,
@@ -36,6 +55,15 @@ class Heston:
         self._nInt = 0
 
     def get_price(self):
+        """Compute the European option price under the Heston model.
+
+        Uses Gauss-Laguerre quadrature to evaluate the Heston characteristic
+        function integrals for the risk-neutral probabilities P1 and P2.
+
+        Returns:
+            float: Option price for the configured option parameters.
+        """
+
         n = 50
         self.gauss_laguerre(n)
 
@@ -66,10 +94,28 @@ class Heston:
         )
 
     def calc_phi(self, alpha, beta):
+        """Compute the Heston characteristic function value for given arguments.
+
+        Parameters:
+            alpha: Complex argument for the characteristic exponent.
+            beta: Complex parameter controlling integration path.
+
+        Returns:
+            complex: Characteristic function evaluated at the given inputs.
+        """
         self.calc_cd(alpha, beta)
         return cmath.exp(self._C + self._dx * self._x0 + self._Dv * self._v0)
 
     def heston_cdf(self, omega, n):
+        """Return the Heston cumulative distribution integrand for probability n.
+
+        Parameters:
+            omega: Integration variable.
+            n: Probability index (1 or 2) corresponding to P1 or P2.
+
+        Returns:
+            float: Real part of the integrand for the chosen probability.
+        """
         log_k = math.log(self._k / self._s) - (self._r - self._q) * self._mat
 
         if n == 1:
@@ -81,6 +127,11 @@ class Heston:
         return 0.0
 
     def gauss_laguerre(self, n):
+        """Compute Gauss-Laguerre quadrature nodes and weights.
+
+        Parameters:
+            n: Number of quadrature points to generate.
+        """
         if self._nInt == n:
             return
         self._nInt = n
@@ -115,6 +166,12 @@ class Heston:
             self._w[i] *= math.exp(z)
 
     def calc_cd(self, alpha, beta):
+        """Calculate intermediate Heston quantities C, D, and dx for characteristic function evaluation.
+
+        Parameters:
+            alpha: Complex exponent parameter.
+            beta: Complex parameter for the damping factor.
+        """
         xi2 = self._xi * self._xi
         m = complex(self._kappa, 0) - alpha * complex(0, self._rho * self._xi)
         d = cmath.sqrt(complex(xi2, 0) * alpha * (alpha + complex(0, 1)) + m * m)

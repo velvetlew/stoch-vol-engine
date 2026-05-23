@@ -4,6 +4,32 @@ class BlackScholes:
         pass
 
     def get_price(self, option):
+
+        """Compute the Black-Scholes price for a European option.
+
+        Parameters
+        ----------
+        option : object
+            An option object with the attributes:
+            - S: spot price
+            - K: strike price
+            - T: time to maturity (in years)
+            - r: risk-free interest rate
+            - sigma: volatility
+            - q: continuous dividend yield
+            - type: 'call' or 'put'
+
+        Returns
+        -------
+        float
+            The Black-Scholes price for the given option.
+
+        Raises
+        ------
+        ValueError
+            If the option type is not 'call' or 'put'.
+        """
+        
         from scipy.stats import norm
         import numpy as np
 

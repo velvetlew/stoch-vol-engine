@@ -21,7 +21,7 @@ def main():
     correlation = -0.70
 
     # Compare prices across different strike prices
-    strikes = np.linspace(60, 140, 30)
+    strikes = np.linspace(60, 180, 30)
 
     bs_prices = []
     heston_prices = []

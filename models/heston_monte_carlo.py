@@ -5,8 +5,19 @@ import matplotlib.pyplot as plt
 # from products.european_call import EuropeanCall
 
 class HestonMonteCarlo:
+    """Monte Carlo pricing engine for the Heston stochastic volatility model.
 
-    def __init__ (self):
+    This class generates spot and variance paths for an underlying asset under
+    Heston dynamics and computes option prices by discounting expected payoffs.
+
+    Methods:
+        get_price: Price a European option using Monte Carlo simulation.
+        get_simulation: Simulate asset and variance paths under Heston dynamics.
+        plot_st: Plot the distribution of asset prices at maturity.
+    """
+
+    def __init__(self):
+        """Initialize the Heston Monte Carlo engine."""
         pass
     
     def get_price(
@@ -19,6 +30,20 @@ class HestonMonteCarlo:
             num_of_steps, 
             num_of_sim
         ):
+        """Compute the discounted Monte Carlo price of a European option.
+
+        Parameters:
+            option: Option object with attributes S, K, r, T, sigma, and type.
+            reversion_level: Long-run variance level (theta) for the Heston model.
+            reversion_rate: Speed of mean reversion (kappa).
+            vol_of_vol: Volatility of volatility (xi).
+            correlation: Correlation between asset and variance Brownian motions.
+            num_of_steps: Number of time steps in the simulation.
+            num_of_sim: Number of Monte Carlo sample paths.
+
+        Returns:
+            float: Discounted expected payoff of the option.
+        """
 
         # sim = self.get_simulation(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)
 
@@ -45,6 +70,24 @@ class HestonMonteCarlo:
             num_of_steps, 
             num_of_sim
         ):
+        """Simulate paths for the underlying asset and variance process.
+
+        The simulation uses the Heston model discretization with correlated
+        Brownian increments for the asset and variance processes.
+
+        Parameters:
+            option: Option object providing initial spot S, rate r, maturity T,
+                and initial volatility sigma.
+            reversion_level: Long-run variance level (theta).
+            reversion_rate: Mean reversion speed (kappa).
+            vol_of_vol: Volatility of volatility (xi).
+            correlation: Correlation between asset and variance increments.
+            num_of_steps: Number of time steps in the simulation.
+            num_of_sim: Number of Monte Carlo sample paths.
+
+        Returns:
+            tuple: (S_paths, v_paths) arrays of shape (num_of_steps+1, num_of_sim).
+        """
 
         s0=option.S
         r=option.r
@@ -88,6 +131,20 @@ class HestonMonteCarlo:
             num_of_steps, 
             num_of_sim
         ):
+        """Plot the density of simulated asset prices at maturity.
+
+        Parameters:
+            option: Option object with initial asset and model parameters.
+            reversion_level: Long-run variance level (theta).
+            reversion_rate: Mean reversion speed (kappa).
+            vol_of_vol: Volatility of volatility (xi).
+            correlation: Correlation between asset and variance increments.
+            num_of_steps: Number of time steps in the simulation.
+            num_of_sim: Number of Monte Carlo sample paths.
+
+        Returns:
+            np.ndarray: Simulated terminal asset prices S_T.
+        """
 
         ST = self.get_simulation(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)[0][-1]
         

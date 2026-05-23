@@ -22,7 +22,7 @@ class HestonMonteCarlo:
 
         # sim = self.get_simulation(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)
 
-        ST = self.get_st(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)
+        ST = self.get_simulation(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)[0][-1]
         K = option.K
         r = option.r
         T = option.T
@@ -35,7 +35,7 @@ class HestonMonteCarlo:
 
         return np.exp(-r * T) * np.mean(payoff)
 
-    def get_st(
+    def get_simulation(
             self, 
             option,
             reversion_level,
@@ -76,7 +76,7 @@ class HestonMonteCarlo:
             self.S[i] = self.S[i-1] * np.exp( (r - 0.5*self.v[i-1])*dt + np.sqrt(self.v[i-1] * dt) * Z[i-1,:,0] )
             self.v[i] = np.maximum(self.v[i-1] + kappa*(theta-self.v[i-1])*dt + xi*np.sqrt(self.v[i-1]*dt)*Z[i-1,:,1],0)
         
-        return self.S[-1]
+        return self.S, self.v
 
     def plot_st(
             self, 
@@ -89,7 +89,7 @@ class HestonMonteCarlo:
             num_of_sim
         ):
 
-        ST = self.get_st(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)
+        ST = self.get_simulation(option, reversion_level, reversion_rate, vol_of_vol, correlation, num_of_steps, num_of_sim)[0][-1]
         
         theta = float(reversion_level ** 2)
         kappa = float(reversion_rate)
@@ -110,7 +110,7 @@ class HestonMonteCarlo:
         plt.legend()
         plt.show()
 
-        return self.S
+        return ST
 
 # p = model.get_simulation(option=EuropeanCall(spot=100, strike=100, risk_free_rate=0.05, maturity=1, volatility=0.2, dividend_yield=0), reversion_level=0.3, reversion_rate=3, vol_of_vol=0.6, correlation=-0.5, num_of_steps=252, num_of_sim=10000)
 # S_sim, V_sim = model.get_simulation(option=EuropeanCall(100, 100, 0.05, 1, 0.2, 0.1), reversion_level=0.3, reversion_rate=0.05, vol_of_vol=2, correlation=-0.5, num_of_steps=252, num_of_sim=1000)
